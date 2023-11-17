@@ -1,29 +1,47 @@
-apply plugin: 'java'
-apply plugin: 'maven-publish'
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
 
-group = 'com.github.jitpack'
-version = '2.0'
+// group = 'com.github.jitpack'
+// version = '2.0'
 
 sourceCompatibility = 1.8 // java 8
 targetCompatibility = 1.8
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-  implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'com.google.guava:guava:29.0-jre'
 }
 
 java {
-	withSourcesJar()
-	withJavadocJar()
+    withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/koyyanap/gradle-simple")
+            credentials {
+                // You can either store the username and token in ~/.gradle/gradle.properties (use the gpr.user and gpr.key keys)
+                // Or you can store them as environment variables e.g. in ~/.bash_profile or ~/.zsh depending on your shell (GITHUB_USERNAME and GITHUB_TOKEN keys)
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
     publications {
-        maven(MavenPublication) {
-		from components.java
+        gpr(MavenPublication) {
+            groupId = 'com.github.jitpack'
+            artifactId = 'gradle-simple'
+            version = '3.0'
+
+            from(components.java)
         }
     }
 }
